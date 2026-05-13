@@ -1,0 +1,70 @@
+// ESP32 FreeRTOS Siren + LED Task
+// GPIO 14 -> Siren (through 2N2222 transistor)
+// GPIO 2  -> Red LED
+
+#define SIREN_PIN 14
+#define LED_PIN 2
+
+// Global control variable
+bool sos_active = true;
+
+// FreeRTOS task for siren and LED
+void sosTask(void *parameter) {
+
+  while (true) {
+
+    if (sos_active == true) {
+
+      // ----- Siren -----
+      digitalWrite(SIREN_PIN, HIGH);
+
+      // ----- LED Toggle ON -----
+      digitalWrite(LED_PIN, HIGH);
+
+      vTaskDelay(500 / portTICK_PERIOD_MS);
+
+      // Turn siren OFF
+      digitalWrite(SIREN_PIN, LOW);
+
+      // ----- LED Toggle OFF -----
+      digitalWrite(LED_PIN, LOW);
+
+      vTaskDelay(100 / portTICK_PERIOD_MS);
+    }
+    else {
+
+      // Immediately turn everything OFF
+      digitalWrite(SIREN_PIN, LOW);
+      digitalWrite(LED_PIN, LOW);
+
+      vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+  }
+}
+
+void setup() {
+
+  pinMode(SIREN_PIN, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
+
+  digitalWrite(SIREN_PIN, LOW);
+  digitalWrite(LED_PIN, LOW);
+
+  // Create task on Core 1
+  xTaskCreatePinnedToCore(
+    sosTask,          // Task function
+    "SOS Task",       // Task name
+    2048,             // Stack size
+    NULL,             // Parameters
+    1,                // Priority
+    NULL,             // Task handle
+    1                 // Core number (Core 1)
+  );
+}
+
+void loop() {
+
+  // Example:
+  // Keep SOS active continuously
+
+}
