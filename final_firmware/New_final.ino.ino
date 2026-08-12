@@ -1,4 +1,4 @@
-*
+/*
  * ================================================================
  *  Safeband_X — ESP32 DEV BOARD FIRMWARE (no camera)
  *  Group WD025 | IT1040 Fundamentals of Computing | SLIIT 2026
